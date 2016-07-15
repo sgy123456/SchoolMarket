@@ -1,6 +1,8 @@
 package com.nupt.shrimp.schoolmarket.view.activity;
 
+import android.app.Activity;
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.graphics.Bitmap;
 import android.graphics.drawable.BitmapDrawable;
 import android.graphics.drawable.Drawable;
@@ -19,6 +21,8 @@ import android.support.v4.widget.DrawerLayout;
 import android.support.v7.app.ActionBarDrawerToggle;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
+import android.text.TextUtils;
+import android.util.Log;
 import android.view.Gravity;
 import android.view.Menu;
 import android.view.MenuItem;
@@ -71,11 +75,10 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
     private CircleImageView avatarImg;
     // 自定义的头像编辑弹出框
     private SelectPicPopupWindow menuWindow;
-
+    private static final String IMAGE_FILE_NAME = "avatarImage.jpg";// 头像文件名称
     private static final int REQUESTCODE_PICK = 0;		// 相册选图标记
     private static final int REQUESTCODE_TAKE = 1;		// 相机拍照标记
     private static final int REQUESTCODE_CUTTING = 2;	// 图片裁切标记
-    private static final String IMAGE_FILE_NAME = "avatarImage.jpg";// 头像文件名称
 
     private void init() {
         navigationView = (NavigationView) findViewById(R.id.nav_view);
@@ -134,7 +137,6 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
         setContentView(R.layout.activity_main);
         init();
     }
-
     @Override
     public void onBackPressed() {
 
@@ -172,13 +174,18 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
         if (id == R.id.home_page) {
 
         } else if (id == R.id.collect) {
+            Intent intent = new Intent(MainActivity.this,BuyHitstoryActivity.class);
+            startActivity(intent);
 
         } else if (id == R.id.details) {
             Intent intent = new Intent(MainActivity.this,PersonDataActivity.class);
             startActivity(intent);
 
-        } else if (id == R.id.settings) {
-
+        } else if (id == R.id.login_out) {
+            deleteLoginState();
+            finish();
+            Intent intent = new Intent(MainActivity.this,LoginActivity.class);
+            startActivity(intent);
         } else if (id == R.id.contact_us) {
 
         } else if (id == R.id.about_us) {
@@ -287,7 +294,11 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
                 break;
             case REQUESTCODE_TAKE:// 调用相机拍照
                 File temp = new File(Environment.getExternalStorageDirectory() + "/" + IMAGE_FILE_NAME);
-                startPhotoZoom(Uri.fromFile(temp));
+                try {
+                    startPhotoZoom(Uri.fromFile(temp));
+                } catch (NullPointerException e) {
+                    e.printStackTrace();// 用户点击取消操作
+                }
                 break;
             case REQUESTCODE_CUTTING:// 取得裁剪后的图片
                 if (data != null) {
@@ -334,6 +345,20 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
                     takeIntent.putExtra(MediaStore.EXTRA_OUTPUT,
                             Uri.fromFile(new File(Environment.getExternalStorageDirectory(), IMAGE_FILE_NAME)));
                     startActivityForResult(takeIntent, REQUESTCODE_TAKE);
+//                    // 调用系统相机
+//                    Intent intent = new Intent(MediaStore.ACTION_IMAGE_CAPTURE);
+//                    intent.addCategory(Intent.CATEGORY_DEFAULT);
+//                    Log.d("IMAGE_FILE_NAME", "avatarImage.jpg");
+//                    String photoFilePath = Environment.getExternalStorageDirectory() + "/"+ "avatarImage.jpg";
+//                    // 通过文件创建一个uri中
+//                    Uri imageUri = Uri.fromFile(new File(photoFilePath));
+//                    // 保存uri对应的照片于指定路径
+//                    intent.putExtra(MediaStore.EXTRA_OUTPUT, imageUri);
+//                    try {
+//                        startActivityForResult(intent, REQUESTCODE_TAKE);
+//                    }catch (Exception e){
+//                        e.printStackTrace();
+//                    }
                     break;
                 // 相册选择图片
                 case R.id.pickPhotoBtn:
@@ -347,4 +372,8 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
             }
         }
     };
+    private void deleteLoginState() {
+        SharedPreferences sharedPreferences = getSharedPreferences("Shrimp", Activity.MODE_PRIVATE);
+        sharedPreferences.edit().clear().commit();
+    }
 }

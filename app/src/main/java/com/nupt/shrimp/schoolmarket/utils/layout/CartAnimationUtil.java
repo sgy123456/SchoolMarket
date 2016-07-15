@@ -2,6 +2,7 @@ package com.nupt.shrimp.schoolmarket.utils.layout;
 
 import android.app.Activity;
 import android.util.DisplayMetrics;
+import android.util.Log;
 import android.view.View;
 import android.view.ViewGroup;
 import android.view.animation.Animation;
@@ -44,13 +45,13 @@ public class CartAnimationUtil {
         int[] start_location = new int[2];
         // 这是获取购买按钮的在屏幕的X、Y坐标（这也是动画开始的坐标）
         imgphoto.getLocationInWindow(start_location);
-        int[] start_location1 = new int[]{start_location[0], start_location[1]};
+//        int[] start_location1 = new int[]{start_location[0], start_location[1]};
         // buyImg是动画的图片，我的是购买的图片
         ImageView buyImg = new ImageView(mActivity);
         // 设置buyImg的图片
-        buyImg.setImageResource(R.drawable.buy);
+        buyImg.setImageResource(R.drawable.button_add_to_buycart);
         // 开始执行动画
-        startAnim(buyImg, start_location1);
+        startAnim(buyImg, start_location);
     }
     /**
      *开始动画
@@ -67,9 +68,10 @@ public class CartAnimationUtil {
         mImgcar.getLocationInWindow(end_location);// shopCart是那个购物车
         int width = getWindowsWidth(mActivity);
         // 计算位移
-        int endY = end_location[1] - start_location[1];// 动画位移的y坐标
-        int endX = end_location[0] - start_location[0] + (mImgcar.getWidth() / 2);// 动画位移的X坐标
-
+        int endY = end_location[1] - mImgcar.getHeight()/2 -start_location[1];// 动画位移的y坐标
+        int endX = end_location[0] - start_location[0]+(mImgcar.getWidth() / 2);// 动画位移的X坐标
+        Log.i("动画结束位置Y",end_location[1]+ "");
+        Log.i("动画结束位置X",end_location[0]+ "");
         // 大小变化动画
         Animation mScaleAnimation = new ScaleAnimation(1f,0.5f,1,0.5f,Animation.RELATIVE_TO_SELF,0.1f,Animation.RELATIVE_TO_SELF,0.1f);
         mScaleAnimation.setDuration(1300);

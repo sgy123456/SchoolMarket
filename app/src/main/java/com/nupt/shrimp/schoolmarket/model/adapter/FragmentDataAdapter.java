@@ -49,6 +49,8 @@ public class FragmentDataAdapter extends RecyclerView.Adapter{
     private LayoutInflater mLayoutInflater;
     private SortedList<ItemModel> mSortedList;
     private Context  context;
+    private  View cartFloatTextView ;
+
     private final String ADD_PRODUCT_POST = "http://115.159.98.48:8080/Shrimp/service/order";
     /**
      *
@@ -58,7 +60,7 @@ public class FragmentDataAdapter extends RecyclerView.Adapter{
     public FragmentDataAdapter(Context context) {
         mLayoutInflater = LayoutInflater.from(context);
         this.context = context;
-
+       cartFloatTextView = (TextView) ((Activity) context).findViewById(R.id.cartFloatTextView);
         mSortedList = new SortedList<>(ItemModel.class, new SortedList.Callback<ItemModel>() {
 
             /**
@@ -138,71 +140,76 @@ public class FragmentDataAdapter extends RecyclerView.Adapter{
 
         final ViewHolder viewHolder = (ViewHolder) holder;
         viewHolder.goodsInfoTextView.setText(item.getTitle());
-        viewHolder.buyImageView.setImageResource(R.drawable.buy);
         viewHolder.priceTextView.setText("￥" + item.getPrice() + "元");
 
         String url = "http://115.159.98.48:8080/Shrimp/service/image?image="+item.getImageName()+"&category="+item.getCatrgory();
         getImageFromServer(url, viewHolder.goodsImageView);
-
+        final View cartFloatImageView = (ImageView) ((Activity) context).findViewById(R.id.cartFloatImageView);
         final ImageView imageView= viewHolder.buyImageView;
         viewHolder.buyImageView.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-
-                RequestQueue requestQueue = Volley.newRequestQueue(context);
-
-                StringRequest stringRequest = new StringRequest(Request.Method.POST, ADD_PRODUCT_POST, new Response.Listener<String>() {
-
-                    @Override
-                    public void onResponse(String response) {
-                        Log.e("addUser", response);
-                        CartAnimationUtil.setAnim((Activity) context, imageView, (ImageView) ((Activity) context).findViewById(R.id.cartFloatImageView));
-                        CartAnimationUtil.setOnEndAnimListener(new onEndAnim());
-                    }
-                }, new Response.ErrorListener() {
-                    @Override
-                    public void onErrorResponse(VolleyError error) {
-                        Toast.makeText(context,"加入购物车错误，请重试!",Toast.LENGTH_SHORT);
-                        Log.e("TAG", error.getMessage(), error);
-                    }
-                }) {
-                    @Override
-                    protected Map<String, String> getParams() throws AuthFailureError {
-                        Map<String, String> map = new HashMap<String, String>();
-                        map.put("param", "modify");
-                        // 根据id查找当前list中的item
-                        int currentNum  = 1;
-                        for(int i = 0;i< GlobalDef.selectedList.size();i++) {
-                            if (GlobalDef.selectedList.get(i).getId() == item.getId()) {
-                                currentNum = GlobalDef.selectedList.get(i).getNum() + 1;
-                                break;
-                            }
-                        }
-                        JSONObject jsonObject_userId_info = new JSONObject();
-                        JSONObject jsonObject_num_productId = new JSONObject();
-                        JSONArray jsonArray = new JSONArray();
-                        try {
-
-                            jsonObject_num_productId.put("productId", item.getId());
-                            jsonObject_num_productId.put("productNum",currentNum);
-
-                            jsonArray.put(jsonObject_num_productId);
-                            jsonObject_userId_info.put("info",jsonArray);
-
-                            SharedPreferences sharedPreferences = context.getSharedPreferences("Shrimp", Activity.MODE_PRIVATE);
-                            String username = sharedPreferences.getString("username","");
-                            jsonObject_userId_info.put("userId",username);
-
-                        }catch (Exception e){
-                            e.printStackTrace();
-                        }
-                        ((MainActivity) context).addBuyCartList(item);
-                        map.put("orderInfo", jsonObject_userId_info.toString());
-                        Log.d("发送orderInfo",jsonObject_userId_info.toString());
-                        return map;
-                    }
-                };
-                requestQueue.add(stringRequest);
+                int[] location = new  int[2] ;
+                cartFloatTextView.getLocationInWindow(location);
+                Log.i("cartFloatTextView的X坐标", location[0] + "");
+                Log.i("cartFloatTextView的Y坐标",location[1]+"");
+                CartAnimationUtil.setAnim((Activity) context, imageView,cartFloatImageView );
+                CartAnimationUtil.setOnEndAnimListener(new onEndAnim());
+                ((MainActivity) context).addBuyCartList(item);
+//                RequestQueue requestQueue = Volley.newRequestQueue(context);
+//
+//                StringRequest stringRequest = new StringRequest(Request.Method.POST, ADD_PRODUCT_POST, new Response.Listener<String>() {
+//
+//                    @Override
+//                    public void onResponse(String response) {
+//                        Log.e("addUser", response);
+////                        CartAnimationUtil.setAnim((Activity) context, imageView, (ImageView) ((Activity) context).findViewById(R.id.cartFloatImageView));
+////                        CartAnimationUtil.setOnEndAnimListener(new onEndAnim());
+//                    }
+//                }, new Response.ErrorListener() {
+//                    @Override
+//                    public void onErrorResponse(VolleyError error) {
+//                        Toast.makeText(context,"加入购物车错误，请重试!",Toast.LENGTH_SHORT);
+//                        Log.e("TAG", error.getMessage(), error);
+//                    }
+//                }) {
+//                    @Override
+//                    protected Map<String, String> getParams() throws AuthFailureError {
+//                        Map<String, String> map = new HashMap<String, String>();
+//                        map.put("param", "modify");
+//                        // 根据id查找当前list中的item
+//                        int currentNum  = 1;
+//                        for(int i = 0;i< GlobalDef.selectedList.size();i++) {
+//                            if (GlobalDef.selectedList.get(i).getId() == item.getId()) {
+//                                currentNum = GlobalDef.selectedList.get(i).getNum() + 1;
+//                                break;
+//                            }
+//                        }
+//                        JSONObject jsonObject_userId_info = new JSONObject();
+//                        JSONObject jsonObject_num_productId = new JSONObject();
+//                        JSONArray jsonArray = new JSONArray();
+//                        try {
+//
+//                            jsonObject_num_productId.put("productId", item.getId());
+//                            jsonObject_num_productId.put("productNum",currentNum);
+//
+//                            jsonArray.put(jsonObject_num_productId);
+//                            jsonObject_userId_info.put("info",jsonArray);
+//
+//                            SharedPreferences sharedPreferences = context.getSharedPreferences("Shrimp", Activity.MODE_PRIVATE);
+//                            String username = sharedPreferences.getString("username","");
+//                            jsonObject_userId_info.put("userId",username);
+//
+//                        }catch (Exception e){
+//                            e.printStackTrace();
+//                        }
+//                        ((MainActivity) context).addBuyCartList(item);
+//                        map.put("orderInfo", jsonObject_userId_info.toString());
+//                        Log.d("发送orderInfo",jsonObject_userId_info.toString());
+//                        return map;
+//                    }
+//                };
+//                requestQueue.add(stringRequest);
             }
         });
     }

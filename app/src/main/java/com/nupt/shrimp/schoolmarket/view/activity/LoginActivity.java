@@ -216,7 +216,6 @@ public class LoginActivity extends AppCompatActivity implements View.OnClickList
         if (pd == null){
             pd = CustomProgressDialog.createDialog(this);
         }
-
         pd.show();
     }
 

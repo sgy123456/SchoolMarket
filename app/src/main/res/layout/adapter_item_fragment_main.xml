@@ -58,6 +58,7 @@
                         android:layout_height="40dp"
                         android:layout_alignParentRight="true"
                         android:layout_marginRight="5dp"
+                        android:background="@drawable/button_add_to_buycart"
                         />
                 </RelativeLayout>
             </RelativeLayout>

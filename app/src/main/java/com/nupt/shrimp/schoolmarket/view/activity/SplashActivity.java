@@ -2,11 +2,13 @@ package com.nupt.shrimp.schoolmarket.view.activity;
 
 import android.app.Activity;
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.content.pm.PackageInfo;
 import android.content.pm.PackageManager;
 import android.content.pm.PackageManager.NameNotFoundException;
 import android.os.AsyncTask;
 import android.os.Bundle;
+import android.util.Log;
 import android.view.animation.AnimationUtils;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
@@ -75,7 +77,14 @@ public class SplashActivity extends Activity {
 
             @Override
             protected void onPostExecute(Integer result) {
-                startActivity(new Intent(SplashActivity.this, LoginActivity.class));
+                SharedPreferences sharedPreferences = getSharedPreferences("Shrimp", Activity.MODE_PRIVATE);
+                String username = sharedPreferences.getString("username", "");
+                Log.i("username-sharedperence",username);
+                if(username==""||username==null) {
+                    startActivity(new Intent(SplashActivity.this, LoginActivity.class));
+                }else{
+                    startActivity(new Intent(SplashActivity.this, MainActivity.class));
+                }
                 finish();
                 //两个参数分别表示进入的动画和退出的动画
                 overridePendingTransition(R.anim.fade_in, R.anim.fade_out);

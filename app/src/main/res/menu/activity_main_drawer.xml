@@ -11,15 +11,15 @@
         <item
             android:id="@+id/collect"
             android:icon="@drawable/collect"
-            android:title="订单" />
+            android:title="历史订单" />
         <item
             android:id="@+id/details"
             android:icon="@drawable/user"
             android:title="详细资料" />
         <item
-            android:id="@+id/settings"
-            android:icon="@drawable/ic_menu_manage"
-            android:title="设置" />
+            android:id="@+id/login_out"
+            android:icon="@drawable/login_out"
+            android:title="退出" />
     </group>
 
     <item android:title="联系我们">

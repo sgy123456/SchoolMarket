@@ -79,6 +79,7 @@
             <Button
                 android:layout_width="130dp"
                 android:layout_height="match_parent"
+                android:id="@+id/button_buy"
                 android:layout_centerVertical="true"
                 android:layout_alignParentRight="true"
                 android:text="去结算"
